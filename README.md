@@ -134,9 +134,59 @@ Add the following configuration (edit paths as needed):
 - `update-visualization`: Update an existing visualization
 - `delete-visualization`: Delete a visualization
 
+## Deploying as a Remote MCP Server (Vercel)
+
+This project can be deployed as a remote HTTP MCP server on Vercel, allowing any MCP client to connect over the network instead of requiring a local stdio process.
+
+### 1. Deploy to Vercel
+
+Push the repo to GitHub, then import it in the [Vercel dashboard](https://vercel.com/new). Vercel auto-detects the Next.js app.
+
+### 2. Set Environment Variables
+
+In your Vercel project settings, add:
+
+| Variable | Required | Description |
+|---|---|---|
+| `REDASH_URL` | Yes | Your Redash instance URL |
+| `REDASH_API_KEY` | Yes | Your Redash API key |
+| `MCP_SHARED_TOKEN` | Yes | A secret bearer token for authenticating MCP clients |
+| `REDASH_TIMEOUT` | No | Request timeout in ms (default: 30000) |
+| `REDASH_EXTRA_HEADERS` | No | Extra headers for Redash requests (JSON or key=value) |
+| `REDASH_SOCKS_PROXY` | No | SOCKS proxy URL |
+
+### 3. Connect Your MCP Client
+
+Point your MCP client at the deployed URL. For Claude Desktop, add to your config:
+
+```json
+{
+  "mcpServers": {
+    "redash-remote": {
+      "type": "url",
+      "url": "https://your-project.vercel.app/api/sse",
+      "headers": {
+        "Authorization": "Bearer YOUR_MCP_SHARED_TOKEN"
+      }
+    }
+  }
+}
+```
+
+The server exposes all the same tools as the stdio version. The MCP endpoint is at `/api/sse` (Server-Sent Events) or `/api/mcp` (Streamable HTTP).
+
+### 4. Local Development (Vercel mode)
+
+```bash
+npm install
+npm run dev:vercel
+```
+
+Then connect to `http://localhost:3000/api/sse`.
+
 ## Development
 
-Run in development mode:
+Run in development mode (stdio):
 ```bash
 npm run dev
 ```
