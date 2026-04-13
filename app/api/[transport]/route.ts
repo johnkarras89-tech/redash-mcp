@@ -40,8 +40,9 @@ function authenticate(req: Request): Response | null {
 }
 
 async function handler(req: Request) {
-  const denied = authenticate(req);
-  if (denied) return denied;
+  // TODO: re-enable auth once OAuth or bearer token is configured in Cowork
+  // const denied = authenticate(req);
+  // if (denied) return denied;
   return mcpHandler(req);
 }
 
