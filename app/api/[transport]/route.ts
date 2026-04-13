@@ -31,10 +31,21 @@ function authenticate(req: Request): Response | null {
 
   const auth = req.headers.get("authorization");
   if (auth !== `Bearer ${token}`) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        error: "Unauthorized",
+        debug: {
+          tokenConfigured: !!token,
+          tokenLength: token.length,
+          authHeaderPresent: !!auth,
+          authHeaderLength: auth?.length ?? 0,
+        },
+      }),
+      {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
   return null;
 }
